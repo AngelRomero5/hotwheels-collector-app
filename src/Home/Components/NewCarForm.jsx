@@ -8,7 +8,7 @@ async function newCar(event) {
         datereleased: document.getElementById('year').value,
         sku: document.getElementById('sku').value,
         price: 1.0,
-        image: document.getElementById('image').files[0] // Handle file input
+        image: document.getElementById('image').files[0]
     };
 
     try {
@@ -31,43 +31,6 @@ async function newCar(event) {
         console.error('Error adding car:', error);
         alert('Failed to add car');
     }
-
-    // try {
-    //     const existingCar = await prisma.car.findFirst({
-    //         where: {
-    //             brand: newCar.brand,
-    //             model: newCar.model,
-    //             datereleased: newCar.datereleased,
-    //             sku: newCar.sku,
-    //         },
-    //     });
-
-    //     if (!existingCar) {
-    //         const response = await prisma.car.create({
-    //             data: {
-    //                 brand: newCar.brand,
-
-    //                 model: newCar.model,
-    //                 datereleased: newCar.datereleased,
-    //                 sku: newCar.sku,
-    //                 image: newCar.image 
-    //             }
-    //         });
-    //         console.log(response);
-    //     } else {
-    //         const response = await prisma.collection.update({
-    //             where: {
-    //                 UserId: 1,
-    //             },
-    //             data: {
-    //                 car: existingCar.id,
-    //             },
-    //         });
-    //         console.log(response);
-    //     }
-    // } catch (error) {
-    //     console.error(error);
-    // }
 }
 
 export default function NewCarForm() {
