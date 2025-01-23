@@ -2,14 +2,24 @@ import React, { useRef } from "react";
 
 export default function Register () { 
 
+    const usernameInput = useRef();
+    const emailInput = useRef();
+    const passwordInput = useRef();
+    const confirmPasswordInput = useRef();
+
     const registerNewUser = async (e) =>{
 
         e.preventDefault();
 
-        const username = useRef();
-        const email = useRef();
-        const password = useRef();
-        const confirmPassword = useRef();
+        if(!usernameInput.current.value || !emailInput.current.value || !passwordInput.current.value || !confirmPasswordInput.current.value){
+            console.log("Please fill in all fields");
+            return;
+        }
+            
+        const username = usernameInput.current.value;
+        const email = emailInput.current.value;
+        const password = passwordInput.current.value;
+        const confirmPassword = confirmPasswordInput.current.value;
 
 
         // Password validation
@@ -65,7 +75,7 @@ export default function Register () {
                             placeholder="Enter name" 
                             id="name"
                             name="name"
-                            ref={username}
+                            ref={usernameInput}
                             required
                             className="mt-1 block w-full border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3"
                         />
@@ -76,7 +86,7 @@ export default function Register () {
                             placeholder="Enter email" 
                             id="email"
                             name="email"
-                            ref={email}
+                            ref={emailInput}
                             required
                             className="mt-1 block w-full border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3"
                         />
@@ -87,7 +97,7 @@ export default function Register () {
                             placeholder="Enter password" 
                             id="password"
                             name="password"
-                            ref={password}
+                            ref={passwordInput}
                             required
                             className="mt-1 block w-full border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3"
                         />
@@ -98,13 +108,13 @@ export default function Register () {
                             placeholder="Confirm password" 
                             id="password"
                             name="password"
-                            ref={confirmPassword}
+                            ref={confirmPasswordInput}
                             required
                             className="mt-1 block w-full border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3"
                         />
                     </div>
                     <div className="text-center">
-                        <button type="submit"  
+                        <button type="submit"
                             onClick={(e) => registerNewUser(e)}
                             className="w-full bg-blue-500 text-white py-2 px-4 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 p-3">
                             Sign up

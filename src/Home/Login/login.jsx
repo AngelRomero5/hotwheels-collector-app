@@ -2,11 +2,19 @@ import React, { useRef } from "react";
 
 export default function Login () {
 
+    const emailInput = useRef();
+    const passwordInput = useRef();
+
     const loginUser = async (e) =>{
         e.preventDefault();
 
-        const email = useRef();
-        const password = useRef();
+        if(!emailInput.current.value  || !passwordInput.current.value == null){
+            console.log("Please fill in all fields");
+            return;
+        }
+
+        const email = emailInput.current.value;
+        const password = passwordInput.current.value;
 
         const newUser = {
             email: email,
@@ -47,7 +55,7 @@ export default function Login () {
                             placeholder="Enter username" 
                             id="email"
                             name="email"
-                            ref={email}
+                            ref={emailInput}
                             className="mt-1 block w-full border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3"
                         />
 
@@ -57,7 +65,7 @@ export default function Login () {
                             placeholder="Enter password" 
                             id="password"
                             name="password"
-                            ref={password}
+                            ref={passwordInput}
                             className="mt-1 block w-full border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3"
                         />
                     </div>
