@@ -1,6 +1,8 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 export default function Login () { 
+
+    const [action, setAction] = useState('Login');
 
     const usernameInput = useRef();
     const emailInput = useRef();
@@ -22,7 +24,6 @@ export default function Login () {
         const password = passwordInput.current.value;
         const confirmPassword = confirmPasswordInput.current.value;
 
-
         // Password validation
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -42,12 +43,14 @@ export default function Login () {
             email: email,
             password: password
         };
+        console.log(newUser);
 
         try {
             const response = await fetch('http://localhost:3001/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    withCredentials: true
                 },
                 body: JSON.stringify(newUser),
             });
@@ -78,12 +81,14 @@ export default function Login () {
             email: email,
             password: password
         };
+        console.log(newUser);
 
         try {
             const response = await fetch('http://localhost:3001/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    withCredentials: true
                 },
                 body: JSON.stringify(newUser),
             });
@@ -97,18 +102,16 @@ export default function Login () {
         } catch (error) {     
             console.log(error);
         }
-
-
     }
 
     return (
         <div className="bg-red-600 min-h-screen flex items-center justify-center">
         <div className="container w-1/2 mx-auto flex flex-col justify-center gap-6 shadow-md p-20 rounded-lg bg-white">
             <div className="container mx-auto">
-                <h1 className="font-sans text-5xl text-center pt-5 font-medium text-red-600">Sign Up</h1>
+                <h1 className="font-sans text-5xl text-center pt-5 font-medium text-red-600">{action}</h1>
             </div>
 
-            <div className="relative flex items-center w-full">
+            <div className="relative flex items-center w-full px-10">
                 <div className="flex-grow border-t border-red-300"></div>
                 <span className="mx-2">
                     <img src="img/racing-flag.png" alt="Racing Flag" className="h-6 w-6" />
@@ -117,18 +120,20 @@ export default function Login () {
             </div>
 
             <form className="flex flex-col space-y-6 px-10">
-                <div className="flex flex-row space-x-4 items-center">
-                    <img src="img/user.png" alt="User" className="h-6 w-6" />
-                    <input 
-                        type= "text" 
-                        placeholder="Enter name" 
-                        id="name"
-                        name="name"
-                        ref={usernameInput}
-                        required
-                        className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
-                    />
-                </div>
+                {action === "Sign up" && 
+                    <div className="flex flex-row space-x-4 items-center">
+                        <img src="img/user.png" alt="User" className="h-6 w-6" />
+                        <input 
+                            type= "text" 
+                            placeholder="Enter name" 
+                            id="name"
+                            name="name"
+                            ref={usernameInput}
+                            required
+                            className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
+                        />
+                    </div>
+                }
                 
                 <div className="flex flex-row space-x-4 items-center">
                     <img src="img/mail.png" alt="Email" className="h-6 w-6" />
@@ -154,35 +159,41 @@ export default function Login () {
                         className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
                     />
                 </div>
-                <div className="flex flex-row space-x-4 items-center">
-                    <img src="img/lock-black.png" alt="lock" className="h-6 w-6" />
-                    <input 
-                        type="password" 
-                        placeholder="Confirm password" 
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        ref={confirmPasswordInput}
-                        required
-                        className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
-                    />
-                </div>
+                {action === "Sign up" &&
+                    <div className="flex flex-row space-x-4 items-center">
+                        <img src="img/lock-black.png" alt="lock" className="h-6 w-6" />
+                        <input 
+                            type="password" 
+                            placeholder="Confirm password" 
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            ref={confirmPasswordInput}
+                            required
+                            className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
+                        />
+                    </div>
+                }       
             </form>
 
-            <div className="font-sans py-4 text-center text-xs text-gray-600"> 
-                <p>Forgot password? Click <a href="" className="text-red-600">here</a>.</p>
+            {action === "Login" &&
+                <div className="font-sans py-2 px-10 text-right text-xs text-gray-600"> 
+                    <p>Forgot password? <a href="" className="text-red-600">Click here</a>.</p>
+                </div>
+            }
+
+            <div className="flex flex-row space-around px-10">
+                <button type="submit"
+                    onClick={action === "Sign up" ? (e) => registerNewUser(e) : (e) => loginUser(e)}
+                    className={"font-sans w-full bg-red-500 text-white py-3 px-4 hover:bg-red-600 rounded-md"}>
+                    {action}
+                </button>
             </div>
 
-            <div className="flex flex-row space-x-10 space-around">
-                    <button type="submit"
-                        onClick={(e) => registerNewUser(e)}
-                        className="font-sans w-1/2 bg-red-500 text-white py-3 px-4 hover:bg-red-600 rounded-md">
-                        Sign up
-                    </button>
-                    <button type="submit"
-                        onClick={(e) => loginUser(e)}
-                        className="font-sans w-1/2 bg-red-500 text-white py-3 px-4 hover:bg-red-600  rounded-md">
-                        Login
-                    </button>
+            <div className="font-sans py-4 text-center text-xs text-gray-600">
+                {action === "Login" ?
+                <p> Not a member? <span className="text-red-600 cursor-pointer" onClick={() => setAction("Sign up")}>Sign Up</span>.</p>
+                :<p>Already a member? <span className="text-red-600 cursor-pointer" onClick={() => setAction("Login")}>Login</span>.</p>
+}
             </div>
         </div>
         </div>
