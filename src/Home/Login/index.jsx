@@ -4,10 +4,22 @@ export default function Login () {
 
     const [action, setAction] = useState('Login');
 
-    const usernameInput = useRef();
-    const emailInput = useRef();
-    const passwordInput = useRef();
-    const confirmPasswordInput = useRef();
+    const usernameInput = useRef(null);
+    const emailInput = useRef(null);
+    const passwordInput = useRef(null);
+    const confirmPasswordInput = useRef(null);
+
+
+    const cleanValues = () => {
+        if (usernameInput.current) usernameInput.current.value = "";
+        if (emailInput.current) emailInput.current.value = "";
+        if (passwordInput.current) passwordInput.current.value = "";
+        if (confirmPasswordInput.current) confirmPasswordInput.current.value = "";
+    }
+
+    useEffect(() => {
+        cleanValues();
+    }, [action]);
 
     // Register function
     const registerNewUser = async (e) =>{
@@ -103,6 +115,7 @@ export default function Login () {
             console.log(error);
         }
     }
+
 
     return (
         <div className="bg-red-600 min-h-screen flex items-center justify-center">
