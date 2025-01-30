@@ -2,14 +2,24 @@ import React, { useRef, useState, useEffect } from "react";
 
 export default function Login () { 
 
+    // Consts and vars
     const [action, setAction] = useState('Login');
+    const [validUsername, setValidUsername] = useState(false);
+    const [validEmail, setValidEmail] = useState(false);
+    const [validPassword, setValidPassword] = useState(false);
+    const [matchedPassword, setMatchedPassword] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    const USER_REGEX = /^[a-zA-Z0-9]{3,30}$/;
+    const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     const usernameInput = useRef(null);
     const emailInput = useRef(null);
     const passwordInput = useRef(null);
     const confirmPasswordInput = useRef(null);
 
-
+    // Clean values after switching between login and register
     const cleanValues = () => {
         if (usernameInput.current) usernameInput.current.value = "";
         if (emailInput.current) emailInput.current.value = "";
@@ -17,9 +27,40 @@ export default function Login () {
         if (confirmPasswordInput.current) confirmPasswordInput.current.value = "";
     }
 
+    // Focus on first input field
     useEffect(() => {
         cleanValues();
+        action === "Login" ? emailInput.current.focus() : usernameInput.current.focus();
     }, [action]);
+
+
+    // Validate input fields
+    useEffect(() => {
+        if (action === "SignUp" && usernameInput.current) {
+            const result = USER_REGEX.test(usernameInput.current.value);
+            setValidUsername(result);
+        }
+    }, [action, usernameInput]);
+
+    useEffect(() => {
+        if (action === "SignUp" && emailInput.current) {
+            const result = EMAIL_REGEX.test(emailInput.current.value);
+            setValidEmail(result);
+        }
+    }, [action, emailInput]);
+
+    useEffect(() => {
+        if (action === "SignUp" && passwordInput.current) {
+            const result = PASSWORD_REGEX.test(passwordInput.current.value);
+            setValidPassword(result);
+            const equal = passwordInput.current.value === confirmPasswordInput.current.value;
+            setMatchedPassword(equal);
+        }
+    }, [action, passwordInput, confirmPasswordInput]);
+
+    useEffect(() => {
+        setErrorMessage("");
+    }, [usernameInput, emailInput, passwordInput, confirmPasswordInput]);
 
     // Register function
     const registerNewUser = async (e) =>{

@@ -1,23 +1,27 @@
-import './App.css';
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
-// Pages and components
-// import Homescreen from './Home/Homescreen';
-import Login from './Home/Login/index';
-import Card from './Home/Components/CarCard';
 import NavBar from './Home/NavBar';
-import NewCarForm from './Home/Components/NewCarForm';
+import Login from './login';
+import Homescreen from './Home/Homescreen';
+
 
 function App() {
-  return (
-    <>
-    <Login /> 
-      {/* <NavBar /> */}
-      {/* <Homescreen /> */}
-      {/* <NewCarForm/> */}
-      {/* <Card /> */}
-    </>
-  );
+    return (
+        <Router>
+            <ConditionalNavBar />
+            <Routes>
+                <Route path="/login" component={Login} />
+                <Route path="/home" component={Homescreen} />
+                <Route path="/" component={Homescreen} />
+            </Routes>
+        </Router>
+    );
+}
+
+function ConditionalNavBar() {
+    const location = useLocation();
+    return location.pathname !== '/login' ? <NavBar /> : null;
 }
 
 export default App;
