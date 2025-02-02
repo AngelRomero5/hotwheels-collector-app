@@ -11,9 +11,9 @@ function App() {
         <Router>
             <ConditionalNavBar />
             <Routes>
-                <Route path="/login" component={Login} />
-                <Route path="/home" component={Homescreen} />
-                <Route path="/" component={Homescreen} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/home" element={<Homescreen />} />
+                <Route path="/" element={<Homescreen />} />
             </Routes>
         </Router>
     );

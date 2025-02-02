@@ -1,30 +1,39 @@
 import React, { useRef, useState, useEffect } from "react";
+import axios from "../api/axios";
 
 export default function Login () { 
 
     // Consts and vars
     const [action, setAction] = useState('Login');
-    const [validUsername, setValidUsername] = useState(false);
-    const [validEmail, setValidEmail] = useState(false);
-    const [validPassword, setValidPassword] = useState(false);
-    const [matchedPassword, setMatchedPassword] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(null);
 
-    const USER_REGEX = /^[a-zA-Z0-9]{3,30}$/;
+    const usernameInput = useRef('');
+
+    const emailInput = useRef('');
+    const [validEmail, setValidEmail] = useState(false);
+    const [emailFocus, setEmailFocus] = useState(false);
+
+    const [passwordInput, setPassword] = useState("");
+    const [validPassword, setValidPassword] = useState(false);
+    const [passwordFocus, setPasswordFocus] = useState(false);
+
+    const [confirmPasswordInput, setConfirmPassword] = useState("");
+    const [matchedPassword, setMatchedPassword] = useState(false);
+    const [confirmPasswordFocus, setConfirmPasswordFocus] = useState(false);
+
+    const [errorMessage, setErrorMessage] = useState('');
+    const [success, setSuccess] = useState(false);
+    
+    const errRef = useRef();
+
     const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-    const usernameInput = useRef(null);
-    const emailInput = useRef(null);
-    const passwordInput = useRef(null);
-    const confirmPasswordInput = useRef(null);
 
     // Clean values after switching between login and register
     const cleanValues = () => {
         if (usernameInput.current) usernameInput.current.value = "";
         if (emailInput.current) emailInput.current.value = "";
-        if (passwordInput.current) passwordInput.current.value = "";
-        if (confirmPasswordInput.current) confirmPasswordInput.current.value = "";
+        setPassword("");
+        setConfirmPassword("");
     }
 
     // Focus on first input field
@@ -33,62 +42,39 @@ export default function Login () {
         action === "Login" ? emailInput.current.focus() : usernameInput.current.focus();
     }, [action]);
 
-
     // Validate input fields
-    useEffect(() => {
-        if (action === "SignUp" && usernameInput.current) {
-            const result = USER_REGEX.test(usernameInput.current.value);
-            setValidUsername(result);
+    const handleEmailChange = () => {
+        if (action === "Sign up") {
+            setValidEmail(EMAIL_REGEX.test(emailInput.current.value));
         }
-    }, [action, usernameInput]);
+    };
+
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+        if (action === "Sign up") {
+            setValidPassword(PASSWORD_REGEX.test(e.target.value));
+        }
+    };
+
+    const handleConfirmPasswordChange = (e) => {
+        setConfirmPassword(e.target.value);
+        setMatchedPassword(e.target.value === passwordInput);
+    };
 
     useEffect(() => {
-        if (action === "SignUp" && emailInput.current) {
-            const result = EMAIL_REGEX.test(emailInput.current.value);
-            setValidEmail(result);
+        if(action === "Sign up"){
+            setErrorMessage("");
         }
-    }, [action, emailInput]);
-
-    useEffect(() => {
-        if (action === "SignUp" && passwordInput.current) {
-            const result = PASSWORD_REGEX.test(passwordInput.current.value);
-            setValidPassword(result);
-            const equal = passwordInput.current.value === confirmPasswordInput.current.value;
-            setMatchedPassword(equal);
-        }
-    }, [action, passwordInput, confirmPasswordInput]);
-
-    useEffect(() => {
-        setErrorMessage("");
-    }, [usernameInput, emailInput, passwordInput, confirmPasswordInput]);
+    }, [action, usernameInput, emailInput, passwordInput, confirmPasswordInput]);
 
     // Register function
     const registerNewUser = async (e) =>{
 
         e.preventDefault();
-
-        if(!usernameInput.current.value || !emailInput.current.value || !passwordInput.current.value || !confirmPasswordInput.current.value){
-            console.log("Please fill in all fields");
-            return;
-        }
             
         const username = usernameInput.current.value;
         const email = emailInput.current.value;
         const password = passwordInput.current.value;
-        const confirmPassword = confirmPasswordInput.current.value;
-
-        // Password validation
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-        if(!passwordRegex.test(password)){
-            console.log("Password must contain at least 8 characters, one uppercase letter, one number and one special character");
-            return;
-        }
-
-        if (password !== confirmPassword){
-            console.log("Passwords do not match");
-            return;
-        }
 
         // Save new user to database
         const newUser = {
@@ -96,24 +82,16 @@ export default function Login () {
             email: email,
             password: password
         };
-        console.log(newUser);
 
         try {
-            const response = await fetch('http://localhost:3001/api/register', {
-                method: 'POST',
+            const response = await axios.post('/register', newUser,{
+                withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json',
-                    withCredentials: true
-                },
-                body: JSON.stringify(newUser),
+                }
             });
 
-            if (!response.ok) {
-                throw new Error(response.Error);
-            }
-
-            const data = await response.json();
-            console.log('User registered successfully! : ', data);
+            console.log('User registered successfully! : ', response.data);
         } catch (error) {     
             console.log(error);
         }
@@ -122,11 +100,6 @@ export default function Login () {
     const loginUser = async (e) =>{
         e.preventDefault();
 
-        if(!emailInput.current.value  || !passwordInput.current.value == null){
-            console.log("Please fill in all fields");
-            return;
-        }
-
         const email = emailInput.current.value;
         const password = passwordInput.current.value;
 
@@ -134,24 +107,15 @@ export default function Login () {
             email: email,
             password: password
         };
-        console.log(newUser);
 
         try {
-            const response = await fetch('http://localhost:3001/api/login', {
-                method: 'POST',
+            const response = await axios.post('/login', newUser, {
+                withCredentials: true,
                 headers: {
-                    'Content-Type': 'application/json',
-                    withCredentials: true
-                },
-                body: JSON.stringify(newUser),
+                    'Content-Type': 'application/json'
+                }
             });
-
-            if (!response.ok) {
-                throw new Error(response.Error);
-            }
-
-            const data = await response.json();
-            console.log('User logged in:', data);
+            console.log('User logged in:', response.data);
         } catch (error) {     
             console.log(error);
         }
@@ -159,7 +123,10 @@ export default function Login () {
 
 
     return (
-        <div className="bg-red-600 min-h-screen flex items-center justify-center">
+        <section className="bg-red-600 min-h-screen flex items-center justify-center">
+            {/* <p ref={errRef} className={errorMessage ? "" : "display-none"}>
+                {errorMessage}
+            </p> */}
         <div className="container w-1/2 mx-auto flex flex-col justify-center gap-6 shadow-md p-20 rounded-lg bg-white">
             <div className="container mx-auto">
                 <h1 className="font-sans text-5xl text-center pt-5 font-medium text-red-600">{action}</h1>
@@ -175,6 +142,7 @@ export default function Login () {
 
             <form className="flex flex-col space-y-6 px-10">
                 {action === "Sign up" && 
+                <>
                     <div className="flex flex-row space-x-4 items-center">
                         <img src="img/user.png" alt="User" className="h-6 w-6" />
                         <input 
@@ -184,9 +152,11 @@ export default function Login () {
                             name="name"
                             ref={usernameInput}
                             required
+                            autoComplete="off"
                             className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
                         />
-                    </div>
+                    </div>               
+                </>
                 }
                 
                 <div className="flex flex-row space-x-4 items-center">
@@ -198,9 +168,16 @@ export default function Login () {
                         name="email"
                         ref={emailInput}
                         required
+                        autoComplete="off"
+                        onFocus={() => setEmailFocus(true)}
+                        onBlur={() => setEmailFocus(false)}
+                        onChange={handleEmailChange}
                         className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
                     />
                 </div>
+                {action === "Sign up" && emailFocus && !validEmail &&
+                        <p className="text-xs text-red-500 mx-10">Enter a valid email.</p>
+                }
                 <div className="flex flex-row space-x-4 items-center">
                     <img src="img/lock-white.png" alt="lock" className="h-6 w-6" />
                     <input 
@@ -208,12 +185,21 @@ export default function Login () {
                         placeholder="Enter password" 
                         id="password"
                         name="password"
-                        ref={passwordInput}
+                        value = {passwordInput}
                         required
+                        autoComplete="off"
+                        onFocus={() => setPasswordFocus(true)}
+                        onBlur={() => setPasswordFocus(false)}
+                        onChange={handlePasswordChange}
                         className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
                     />
                 </div>
+                {action === "Sign up" && passwordFocus && !validPassword &&
+                    <p className="text-xs text-red-500 mx-10">Password must contain at least 8 characters,
+                                           one uppercase letter, one number, and one special character.</p>               
+                }
                 {action === "Sign up" &&
+                <>
                     <div className="flex flex-row space-x-4 items-center">
                         <img src="img/lock-black.png" alt="lock" className="h-6 w-6" />
                         <input 
@@ -221,12 +207,20 @@ export default function Login () {
                             placeholder="Confirm password" 
                             id="confirmPassword"
                             name="confirmPassword"
-                            ref={confirmPasswordInput}
+                            value = {confirmPasswordInput}
                             required
+                            onFocus={() => setConfirmPasswordFocus(true)}
+                            onBlur={() => setConfirmPasswordFocus(false)}
+                            onChange={handleConfirmPasswordChange}
                             className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
                         />
+                         
                     </div>
-                }       
+                    { confirmPasswordFocus && !matchedPassword &&
+                            <p className="text-xs text-red-500 mx-10">Passwords do not match.</p>
+                    }
+                    </>                        
+                }
             </form>
 
             {action === "Login" &&
@@ -250,7 +244,7 @@ export default function Login () {
 }
             </div>
         </div>
-        </div>
+        </section>
     );
 
 }

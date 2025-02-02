@@ -7,14 +7,15 @@ export default function NavBar() {
     const username = "Mirai"; // Replace with actual username logic
 
     return (
-        <div className="bg-white text-red-700 py-4 px-8 flex justify-between items-center">
+        <div className="bg-white text-red-700 py-4 px-8 flex justify-between items-center z-auto">
             <div className="flex items-center">
-                <h1 className="text-2xl font-bold">HW Collections</h1>
+                <h1 className="text-2xl font-bold">Cloud 64</h1>
             </div>
             <ul className="flex space-x-3">
                 <li className="inline p-2 hover:bg-gray-100 rounded cursor-pointer" id="Home">Home</li>
-                <li className="inline p-2 hover:bg-gray-100 rounded cursor-pointer" id="NewCar">Add Car</li>
+                <li className="inline p-2 hover:bg-gray-100 rounded cursor-pointer" id="NewCar">Models</li>
                 <li className="inline p-2 hover:bg-gray-100 rounded cursor-pointer" id="Collections">Collections</li>
+                <li className="inline p-2 hover:bg-gray-100 rounded cursor-pointer" id="About">About</li>
             </ul>
             <div className={`flex items-center ${isAuthenticated ? 'space-x-4' : 'space-x-3'}`}>
                 {isAuthenticated ? (
