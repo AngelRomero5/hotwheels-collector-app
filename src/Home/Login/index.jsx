@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import axios from "../api/axios";
+import axios from "../../api/axios";
 
 export default function Login () { 
 
@@ -93,6 +93,13 @@ export default function Login () {
 
             console.log('User registered successfully! : ', response.data);
         } catch (error) {     
+            if(error.status == 409){
+                setErrorMessage("User already exists.");
+            } else if(error.status == 500){
+                setErrorMessage("Internal server error.");
+            } else {
+                setErrorMessage("Something went wrong.");
+            }
             console.log(error);
         }
     }
@@ -117,6 +124,13 @@ export default function Login () {
             });
             console.log('User logged in:', response.data);
         } catch (error) {     
+            if(error.status == 401){
+                setErrorMessage("Invalid credentials.");
+            } else if(error.status == 500){
+                setErrorMessage("Internal server error.");
+            } else {
+                setErrorMessage("Something went wrong.");
+            }
             console.log(error);
         }
     }
@@ -153,7 +167,7 @@ export default function Login () {
                             ref={usernameInput}
                             required
                             autoComplete="off"
-                            className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
+                            className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-600"
                         />
                     </div>               
                 </>
@@ -172,17 +186,17 @@ export default function Login () {
                         onFocus={() => setEmailFocus(true)}
                         onBlur={() => setEmailFocus(false)}
                         onChange={handleEmailChange}
-                        className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
+                        className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-600"
                     />
                 </div>
                 {action === "Sign up" && emailFocus && !validEmail &&
-                        <p className="text-xs text-red-500 mx-10">Enter a valid email.</p>
+                        <p className="text-xs text-red-600 mx-10">Enter a valid email.</p>
                 }
                 <div className="flex flex-row space-x-4 items-center">
                     <img src="img/lock-white.png" alt="lock" className="h-6 w-6" />
                     <input 
                         type="password" 
-                        placeholder="Enter password" 
+                        placeholder="Enter password"
                         id="password"
                         name="password"
                         value = {passwordInput}
@@ -191,11 +205,11 @@ export default function Login () {
                         onFocus={() => setPasswordFocus(true)}
                         onBlur={() => setPasswordFocus(false)}
                         onChange={handlePasswordChange}
-                        className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
+                        className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-600"
                     />
                 </div>
                 {action === "Sign up" && passwordFocus && !validPassword &&
-                    <p className="text-xs text-red-500 mx-10">Password must contain at least 8 characters,
+                    <p className="text-xs text-red-600 mx-10">Password must contain at least 8 characters,
                                            one uppercase letter, one number, and one special character.</p>               
                 }
                 {action === "Sign up" &&
@@ -212,12 +226,12 @@ export default function Login () {
                             onFocus={() => setConfirmPasswordFocus(true)}
                             onBlur={() => setConfirmPasswordFocus(false)}
                             onChange={handleConfirmPasswordChange}
-                            className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-500"
+                            className="mt-1 block w-full border-b focus:outline-none sm:text-sm p-3 focus:border-red-600"
                         />
                          
                     </div>
                     { confirmPasswordFocus && !matchedPassword &&
-                            <p className="text-xs text-red-500 mx-10">Passwords do not match.</p>
+                            <p className="text-xs text-red-600 mx-10">Passwords do not match.</p>
                     }
                     </>                        
                 }

@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
-import NavBar from './Home/NavBar';
-import Login from './login';
-import Homescreen from './Home/Homescreen';
+import NavBar from './Home/Components/NavBar';
+import Login from './Home/Login';
+import Home from './Home/Homescreen';
 
 
 function App() {
@@ -12,8 +12,8 @@ function App() {
             <ConditionalNavBar />
             <Routes>
                 <Route path="/login" element={<Login />} />
-                <Route path="/home" element={<Homescreen />} />
-                <Route path="/" element={<Homescreen />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/" element={<Home />} />
             </Routes>
         </Router>
     );

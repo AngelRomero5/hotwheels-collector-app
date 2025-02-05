@@ -1,7 +1,8 @@
-export default function CardsGrid() {
 
-    return (
-        <>
+
+export default function Models(){
+    return(
+         <>
         <section className='flex flex-row justify-around pt-10'>
              <h1 className='text-5xl text-red-700 font-bold'>Models</h1>
              <div className='flex flex-row justify-around pt-10'>
