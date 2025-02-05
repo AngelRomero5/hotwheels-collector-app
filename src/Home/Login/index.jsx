@@ -1,14 +1,18 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import axios from "../../api/axios";
 
 export default function Login () { 
 
     // Consts and vars
+    const navigate = useNavigate();
+
     const [action, setAction] = useState('Login');
 
-    const usernameInput = useRef('');
+    const usernameInput = useRef(null);
 
-    const emailInput = useRef('');
+    const emailInput = useRef(null);
     const [validEmail, setValidEmail] = useState(false);
     const [emailFocus, setEmailFocus] = useState(false);
 
@@ -20,7 +24,7 @@ export default function Login () {
     const [matchedPassword, setMatchedPassword] = useState(false);
     const [confirmPasswordFocus, setConfirmPasswordFocus] = useState(false);
 
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState("");
     const [success, setSuccess] = useState(false);
     
     const errRef = useRef();
@@ -72,9 +76,14 @@ export default function Login () {
 
         e.preventDefault();
             
-        const username = usernameInput.current.value;
-        const email = emailInput.current.value;
-        const password = passwordInput.current.value;
+        const username = usernameInput.current?.value || "";
+        const email = emailInput.current?.value || "";
+        const password = passwordInput;
+
+        if (!username || !email || !password) {
+            setErrorMessage("Error: All fields are required.");
+            return;
+        }
 
         // Save new user to database
         const newUser = {
@@ -92,13 +101,14 @@ export default function Login () {
             });
 
             console.log('User registered successfully! : ', response.data);
+            setSuccess(true);
         } catch (error) {     
-            if(error.status == 409){
-                setErrorMessage("User already exists.");
-            } else if(error.status == 500){
+            if(error.status === 409){
+                setErrorMessage("Error: User already exists.");
+            } else if(error.status === 500){
                 setErrorMessage("Internal server error.");
             } else {
-                setErrorMessage("Something went wrong.");
+                setErrorMessage("Error: Something went wrong.");
             }
             console.log(error);
         }
@@ -107,8 +117,13 @@ export default function Login () {
     const loginUser = async (e) =>{
         e.preventDefault();
 
-        const email = emailInput.current.value;
-        const password = passwordInput.current.value;
+        const email = emailInput.current?.value || "";
+        const password = passwordInput;
+
+        if (!email || !password) {
+            setErrorMessage("Error: All fields are required.");
+            return;
+        }
 
         const newUser = {
             email: email,
@@ -123,13 +138,14 @@ export default function Login () {
                 }
             });
             console.log('User logged in:', response.data);
+            setSuccess(true);
         } catch (error) {     
-            if(error.status == 401){
-                setErrorMessage("Invalid credentials.");
-            } else if(error.status == 500){
+            if(error.status === 401){
+                setErrorMessage("Error: Invalid credentials.");
+            } else if(error.status === 500){
                 setErrorMessage("Internal server error.");
             } else {
-                setErrorMessage("Something went wrong.");
+                setErrorMessage("Error: Something went wrong.");
             }
             console.log(error);
         }
@@ -137,11 +153,19 @@ export default function Login () {
 
 
     return (
+        <>
+        {success ? (
+            navigate("/Homescreen/index") // Redirect immediately when success is true
+        )  : 
         <section className="bg-red-600 min-h-screen flex items-center justify-center">
-            {/* <p ref={errRef} className={errorMessage ? "" : "display-none"}>
-                {errorMessage}
-            </p> */}
         <div className="container w-1/2 mx-auto flex flex-col justify-center gap-6 shadow-md p-20 rounded-lg bg-white">
+            <div className="flex justify-center">
+                <p ref={errRef} className={errorMessage ? "text-center bg-red-400 text-white py-5 w-1/2 " : "display-none"}>
+                {errorMessage}
+                </p>
+            </div>
+           
+                
             <div className="container mx-auto">
                 <h1 className="font-sans text-5xl text-center pt-5 font-medium text-red-600">{action}</h1>
             </div>
@@ -255,10 +279,13 @@ export default function Login () {
                 {action === "Login" ?
                 <p> Not a member? <span className="text-red-600 cursor-pointer" onClick={() => setAction("Sign up")}>Sign Up</span>.</p>
                 :<p>Already a member? <span className="text-red-600 cursor-pointer" onClick={() => setAction("Login")}>Login</span>.</p>
-}
+                }
             </div>
         </div>
         </section>
+        }
+        </>
     );
+    
 
 }
