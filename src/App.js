@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import NavBar from './Home/Components/NavBar';
 import Login from './Home/Login';
 import Home from './Home/Homescreen';
+import Models from './Home/CarModels';
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/home" element={<Home />} />
+                <Route path="/models" element={<Models />} />
                 <Route path="/" element={<Home />} />
             </Routes>
         </Router>
