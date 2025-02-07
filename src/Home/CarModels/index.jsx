@@ -191,22 +191,22 @@ export default function Models(){
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {models.map((model) => (
                         <div key={model.id} className='p-2 bg-white rounded-lg shadow-md w-full'> 
-                            <div className=" rounded-lg border border-red-600 text-center overflow-hidden">
+                            <div className="rounded-lg border border-red-600 text-center overflow-hidden">
                                 <div className='px-6 py-4'>
-                                    <img src={model.image} alt={model.name} className="w-full h-100 object-cover rounded-t-lg"/>                            
+                                    <img src={model.image} alt={model.name} className="w-full h-100 object-cover rounded-lg transition-transform duration-400 hover:scale-105"/>                            
                                     <p className='text-red-600 text-sm mt-2'>Series: {model.description}</p>
                                     <h1 className='text-gray-800 text-2xl hover:underline cursor-pointer mt-1'>{model.name}</h1>
                                     <p className='text-gray-500 text-sm mt-2'>Price: {model.price}</p>
                                 </div>
-                                <div className='border-t border-gray-200 flex flex-row justify-between py-2'>
-                                    <button onClick={handleViewModalClick} className='bg-white text-red-600 w-1/2 py-1 rounded hover:text-red-800 transition duration-300 flex items-center justify-center'>
+                                <div className='bg-red-600 border-t border-gray-200 flex flex-row py-2'>
+                                    <button onClick={handleViewModalClick} className='text-white w-1/2 py-1 rounded hover:text-black transition duration-300 flex items-center justify-center'>
                                         <span className="mr-2">View</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                                             <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
                                             <path fillRule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clipRule="evenodd" />
                                         </svg>
                                     </button>
-                                    <button className='bg-white text-green-600 w-1/2 py-1 rounded hover:text-green-400 transition duration-300 flex items-center justify-center'>
+                                    <button className='text-white w-1/2 py-1 rounded hover:text-black transition duration-300 flex items-center justify-center'>
                                         <span className="mr-2">Add</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
                                             <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-11.25a.75.75 0 0 0-1.5 0v2.5h-2.5a.75.75 0 0 0 0 1.5h2.5v2.5a.75.75 0 0 0 1.5 0v-2.5h2.5a.75.75 0 0 0 0-1.5h-2.5v-2.5Z" clipRule="evenodd" />
@@ -219,10 +219,8 @@ export default function Models(){
                 </div>
             </div>
         </section>
-        {/* Fix this buttons: */}
-        <CarCard isVisible={isViewModalVisible}/>
+        <CarCard isVisible={isViewModalVisible} onClose={handleViewModalClick}/>
         <NewCarForm isVisible={isCreateModalVisible} onClose={handleCreateButtonClick}/>
-
         </>
     );
 }
