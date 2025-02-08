@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
+import axios from '../../api/axios';
 
 export default function NewCarForm({ isVisible, onClose}) {
 
+    // Input fields data from the user
     const [frontImage, setFrontImage] = useState(null);
     const [backImage, setBackImage] = useState(null);
+    const [nameOnPackage, setNameOnPackage] = useState('');
+    const [make, setMake] = useState('');
+    const [model, setModel] = useState('');
+    const [series, setSeries] = useState('');
 
-    const inputFields = [
-        {
-            
-        }
+    // Fields for the form
+    const fields = [
+        { id: 'name', label: 'Name', placeholder: 'Enter name on the package', value: nameOnPackage, onChange: setNameOnPackage },
+        { id: 'make', label: 'Make', placeholder: 'Enter make', value: make, onChange: setMake },
+        { id: 'model', label: 'Model', placeholder: 'Enter model', value: model, onChange: setModel },
+        { id: 'series', label: 'Series', placeholder: 'Enter series', value: series, onChange: setSeries },
     ];
-
+    // const [price, setPrice] = useState('');
 
     const handleFrontImageChange = (e) => {
         const file = e.target.files[0];
@@ -26,39 +34,34 @@ export default function NewCarForm({ isVisible, onClose}) {
         }
     };
 
-    // const newCar = async (event) => {
-    // event.preventDefault();
+    //  TODO: add tokens through the whole application in every request and test this function
 
-    // const newCar = {
-    //     brand: useRef(),
-    //     model: useRef(),
-    //     datereleased: useRef(),
-    //     sku: useRef(),
-    //     price: useRef(),
-    //     image: useRef()
-    // };
+    // Create a new car in DB
+    const newCar = async (event) => {
+        event.preventDefault();
 
-    //     try {
-    //         const response = await fetch('http://localhost:3001/api/AddCar', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify(newCar),
-    //         });
+        const newCar = {
+            nameonpackage: nameOnPackage,
+            brand: make,
+            model: model,
+            series: series
+        };
+            try {
+                const response = await axios.post('/NewCar',{
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+                });
 
-    //         if (!response.ok) {
-    //             throw new Error('Failed to add car');
-    //         }
-
-    //         const data = await response.json();
-    //         console.log('Car added:', data);
-    //         alert('Car added successfully!');
-    //     } catch (error) {
-    //         console.error('Error adding car:', error);
-    //         alert('Failed to add car');
-    //     }
-    // }
+                if (!response.ok) {
+                    throw new Error('Failed to add car');
+                }
+                console.log('Car added successfully! : ', response.data);
+            } catch (error) {
+                console.error('Error adding car:', error);
+            }
+    }
 
     if (!isVisible) return null;
 
@@ -119,65 +122,27 @@ export default function NewCarForm({ isVisible, onClose}) {
                     </div>
                     {/* Fields */}
                     <div className='grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-4'>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="make">
-                                Make
-                            </label>
-                            <input
-                                id="make"
-                                type="text"
-                                placeholder="Enter Make"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 border-red-600 leading-tight focus:outline-none focus:shadow-outline"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="model">
-                                Model
-                            </label>
-                            <input
-                                id="model"
-                                type="text"
-                                placeholder="Enter Model"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
-                                Price
-                            </label>
-                            <input
-                                id="price"
-                                type="text"
-                                placeholder="Enter Price"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="series">
-                                Series
-                            </label>
-                            <input
-                                id="series"
-                                type="text"
-                                placeholder="Enter Series"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="series">
-                                Series
-                            </label>
-                            <input
-                                id="series"
-                                type="text"
-                                placeholder="Enter Series"
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            />
-                        </div>
+                        {fields.map((field) => (
+                            <div key={field.id} className="mb-4">
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={field.id}>
+                                    {field.label}
+                                </label>
+                                <input
+                                    id={field.id}
+                                    type="text"
+                                    placeholder={field.placeholder}
+                                    autoComplete='off'
+                                    value={field.value}
+                                    onChange={(e) => field.onChange(e.target.value)}
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 border-red-600 leading-tight focus:outline-none focus:shadow-outline"
+                                />
+                            </div>
+                        ))}
                         <div className="flex items-center justify-between">
                             <button
                                 type="submit"
-                                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                onClick={newCar}
+                                className={"bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"}
                             >
                                 Save
                             </button>
