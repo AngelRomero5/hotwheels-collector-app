@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 // import { useAuth } from './AuthProvider';
 
 export default function NavBar() {
-    const isAuthenticated = false; // Replace with actual authentication logic
+    const isAuthenticated = true; // Replace with actual authentication logic
     const navigate = useNavigate();
     // const { isAuthenticated, login, logout };
     const username = "Mirai"; // Replace with actual username logic
